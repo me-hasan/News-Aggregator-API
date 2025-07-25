@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  web:
+    container_name: dev-app-nginx
+    hostname: devappwebsrv
+    image: nginx:latest
+    restart: always
+    ports:
+      - "8081:80"
+    volumes:
+      - ./src:/public_html
+      - ./conf.d:/etc/nginx/conf.d
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - php
+    networks:
+      - wingsfinnet
+
+  php:
+    container_name: dev-app-php
+    hostname: devappphpsrv
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    volumes:
+      - ./src:/public_html
+      - ./logs:/var/log/php-fpm
+      # - ./supervisor/supervisor.conf:/etc/supervisor/conf.d/supervisor.conf
+      # - ./entrypoint.sh:/usr/local/bin/entrypoint.sh
+    working_dir: /public_html
+    expose:
+      - "9000"
+    networks:
+      - wingsfinnet
+
+  composer:
+    image: composer
+    volumes:
+      - ./src:/app
+    command: install
+    networks:
+      - wingsfinnet
+
+networks:
+  wingsfinnet:
+    external: true
