@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    // API Keys located in .env
+    'newsapi' => [
+        'key' => env('NEWS_API_KEY'),
+    ],
+    'guardian' => [
+        'key' => env('GUARDIAN_API_KEY'),
+    ],
+    'nytimes' => [
+        'key' => env('NYT_API_KEY'),
+    ],
+
 ];
