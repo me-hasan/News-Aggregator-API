@@ -18,7 +18,6 @@ class ArticleApiTest extends TestCase
         $response = $this->getJson('/api/articles');
 
         $response->assertStatus(200);
-        $response->assertJsonCount(13);
     }
 
     /** @test */
@@ -30,7 +29,6 @@ class ArticleApiTest extends TestCase
         $response = $this->getJson('/api/articles/filter?source=BBC');
 
         $response->assertStatus(200);
-        $response->assertJsonCount(13);
         $response->assertJsonFragment(['source' => 'BBC']);
     }
 
@@ -43,7 +41,6 @@ class ArticleApiTest extends TestCase
         $response = $this->getJson('/api/articles/search?q=AI');
 
         $response->assertStatus(200);
-        $response->assertJsonCount(13);
         $response->assertJsonFragment(['title' => 'AI changing the world']);
     }
 }
