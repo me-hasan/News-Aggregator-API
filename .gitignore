@@ -21,4 +21,16 @@
 /vendor
 Homestead.json
 Homestead.yaml
-Thumbs.db
+Thumbs.db 
+
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+
+# Laravel Mix
+/public/hot
+/public/mix-manifest.json
+/public/js/*.map
+/public/css/*.map

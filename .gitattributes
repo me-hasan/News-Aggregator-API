@@ -8,16 +8,4 @@
 
 /.github export-ignore
 CHANGELOG.md export-ignore
-.styleci.yml export-ignore 
-
-/vendor
-/node_modules
-/public/storage
-/storage/*.key
-.env
-
-# Laravel Mix
-/public/hot
-/public/mix-manifest.json
-/public/js/*.map
-/public/css/*.map
+.styleci.yml export-ignore
