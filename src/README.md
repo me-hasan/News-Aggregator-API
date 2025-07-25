@@ -183,7 +183,7 @@ Alternatively, you can run the `fetch:news` command every hour using cron.
 1. Add the following line inside your PHP container’s crontab (you can use a shell script or Dockerfile for this):
 
 ```bash
-0 * * * * php /path/to/artisan fetch:news >> /var/log/cron-news.log 2>&1
+0 * * * * docker exec dev-app-php supervisorctl start news-fetcher >> /var/log/cron-news.log 2>&1
 ```
 
 2. To ensure cron is running in the container, you can use Supervisor to manage it too:
