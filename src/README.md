@@ -1,61 +1,156 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# News Aggregator API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based API service that aggregates news articles from multiple sources including NewsAPI, The Guardian, and New York Times.
 
-## About Laravel
+## Table of Contents
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Features](#features)
+- [Docker Setup](#docker-setup)
+- [Environment Configuration](#environment-configuration)
+- [API Endpoints](#api-endpoints)
+- [API Testing](#api-testing)
+- [Data Fetching](#data-fetching)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Aggregates news from multiple sources (NewsAPI, The Guardian, New York Times)
+- RESTful API for accessing news articles
+- Search and filter functionality
+- Docker containerization for easy deployment
+- PostgreSQL database for data storage
 
-## Learning Laravel
+## Docker Setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Prerequisites
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- Docker and Docker Compose installed on your system
+- Git to clone the repository
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Installation
 
-## Laravel Sponsors
+1. Clone the repository:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone <repository-url>
+cd news-aggregator-api
+```
 
-### Premium Partners
+2. Create a network for the containers (if not already created):
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+docker network create wingsfinnet
+```
 
-## Contributing
+3. Build and start the containers:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+docker-compose up -d
+```
 
-## Code of Conduct
+This will start three containers:
+- `dev-app-nginx`: Nginx web server (accessible at http://localhost:8081)
+- `dev-app-php`: PHP-FPM service
+- `composer`: Temporary container to install PHP dependencies
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Container Structure
 
-## Security Vulnerabilities
+- **Web Server**: Nginx serves the application on port 8081
+- **PHP Service**: PHP 8.2 with PostgreSQL extensions
+- **Composer**: Installs PHP dependencies
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Environment Configuration
+
+1. Copy the example environment file:
+
+```bash
+cp src/.env.example src/.env
+```
+
+2. Configure the following environment variables in the `.env` file:
+
+```
+APP_NAME="NewsAggregator"
+APP_URL=http://localhost:8081
+APP_KEY=<generate-app-key>
+
+DB_CONNECTION=pgsql
+DB_HOST=<database-host>
+DB_PORT=5432
+DB_DATABASE=<database-name>
+DB_USERNAME=<database-username>
+DB_PASSWORD=<database-password>
+
+NEWS_API_KEY=<your-newsapi-key>
+GUARDIAN_API_KEY=<your-guardian-api-key>
+NYT_API_KEY=<your-nyt-api-key>
+```
+
+3. Generate an application key:
+
+```bash
+docker exec dev-app-php php artisan key:generate
+```
+
+4. Run database migrations:
+
+```bash
+docker exec dev-app-php php artisan migrate
+```
+
+## API Endpoints
+
+The API provides the following endpoints:
+
+- `GET /api/articles`: List all articles (paginated)
+- `GET /api/articles/{id}`: Get a specific article by ID
+- `GET /api/articles/search?q={query}`: Search articles by keyword
+- `GET /api/articles/filter?source={source}&category={category}&from={date}&to={date}`: Filter articles by source, category, and date range
+
+## API Testing
+
+You can test the API endpoints using tools like cURL, Postman, or any HTTP client.
+
+### Example Requests
+
+1. Get all articles:
+
+```bash
+curl http://localhost:8081/api/articles
+```
+
+2. Get a specific article:
+
+```bash
+curl http://localhost:8081/api/articles/1
+```
+
+3. Search for articles containing "climate":
+
+```bash
+curl http://localhost:8081/api/articles/search?q=climate
+```
+
+4. Filter articles by source and date range:
+
+```bash
+curl "http://localhost:8081/api/articles/filter?source=The%20Guardian&from=2024-01-01&to=2024-12-31"
+```
+
+## Data Fetching
+
+The application includes a command to fetch news articles from the configured API sources:
+
+```bash
+docker exec dev-app-php php artisan fetch:news
+```
+
+This command fetches articles from:
+- NewsAPI (top headlines)
+- The Guardian
+- New York Times (top stories)
 
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+        
