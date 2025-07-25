@@ -9,7 +9,9 @@ RUN apk --no-cache add \
     openssh \
     bash \
     curl \
-    tar
+    tar \
+    supervisor && \  
+    rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql pgsql
@@ -20,8 +22,10 @@ COPY ./php.ini /usr/local/etc/php/
 COPY ./pg_hba.conf /etc/postgresql/pg_hba.conf
 COPY ./postgres.conf /etc/postgresql/postgresql.conf
 
-# Optional MySQL config
-# COPY ./my.cnf /etc/mysql/my.cnf
+# Copy Supervisor configuration file into the container
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf 
+COPY supervisord.conf /etc/supervisord.conf
 
 EXPOSE 9000
-CMD ["php-fpm"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
