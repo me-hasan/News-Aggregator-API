@@ -17,6 +17,8 @@ A Laravel-based API service that aggregates news articles from multiple sources 
 
 ---
 
+**Note:** Please find the **database.txt** and **Api-credential.txt**
+
 ## Features
 
 - Aggregates news from multiple sources (NewsAPI, The Guardian, New York Times)

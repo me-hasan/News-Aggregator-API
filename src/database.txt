@@ -1,0 +1,1 @@
+docker run -d --name dhoni-db --network wingsfinnet -e POSTGRES_DB=mydb -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypass -v $(pwd)/db_data:/var/lib/postgresql/data -p 5432:5432 postgres:15
